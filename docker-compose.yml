@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  calendar-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      # Map container's 8501 port to host's 8501 port
+      - "8501:8501"
+    volumes:
+      - ./credentials:/app/credentials
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/credentials/credentials.json
+      - TZ=Asia/Kolkata
+    restart: unless-stopped
+    # Add a healthcheck to verify the service is running
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # Add clear container name for easier reference
+    container_name: calendar-assistant
